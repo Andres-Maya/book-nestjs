@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Put, UnprocessableEntityException } from '@nestjs/common';
 
 interface User {
     id: string;
@@ -55,7 +55,11 @@ export class UsersController {
     createUser(@Body() user: User) {
         console.log('.:: user', user);
 
-        if (user.correo === undefined) {
+        if(user.correo.includes("@") === false) {
+            throw new UnprocessableEntityException('El correo ${user.correo} no es válido');
+        }
+
+        if (user.correo.trim() === "") {
             throw new BadRequestException('El correo es obligatorio');
         }
         this.users.push(user);
