@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
 
 interface User {
     id: string;
@@ -31,12 +31,18 @@ export class UsersController {
         return this.users;
     }
 
-    @Get('id/:id')
+    @Get(':id')
     getUserById(@Param('id') id: string) {
         console.log('.:: UserID', id);
-        const data = this.users.find((user) => user.id === id);
-        console.log(".:: data: ", data);
-        return data;
+        const user = this.users.find((user) => user.id === id);
+        console.log(".:: usuario buscado: ", user);
+        if (user === undefined) {
+            throw new NotFoundException('Usuario con ID ${id} no existe');
+        }
+        if(user.id === "1") {
+            throw new ForbiddenException('No tienes permisos para acceder al usuario con ID ${id}');
+        }
+        return user;
     }
 
     @Get('search/:name')
@@ -53,6 +59,42 @@ export class UsersController {
             msg: "Usuario creado correctamente",    "Usuario": Unknown word.
             data: user
         }
+    }
+
+    @Delete(':id')
+    deleteUser(@Param('id') id: string) {
+        const position = this.users.findIndex((user) => user.id === id);
+        this.users.splice(position, 1);
+        return{
+            msg: "Usuario eliminado correctamente", "Usuario": Unknown word.
+        }
+    }
+
+    @Put(':id')
+    updateUser(@Param('id') id: string, @Body() changes: User) {
+        console.log('.:: ID usuario', id);
+        console.log('.:: Cambios', changes);
+
+        const position = this.users.findIndex((user) => user.id === id);
+
+        if(position === -1){
+            return {
+                msg: 'Usuario no encontrado'
+            }
+        }
+
+        const currentData = this.users[position];
+        const updateUser = {
+            ...currentData,
+            ...changes
+        };
+
+        this.users[position] = updateUser;
+
+        return{
+            msg: 'Usuario actualizado correctamente',
+            data: updateUser
+        };
     }
     
 }
