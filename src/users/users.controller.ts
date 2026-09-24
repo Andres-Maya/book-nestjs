@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 
 interface User {
     id: string;
@@ -39,7 +39,7 @@ export class UsersController {
         if (user === undefined) {
             throw new NotFoundException('Usuario con ID ${id} no existe');
         }
-        if(user.id === "1") {
+        if (user.id === "1") {
             throw new ForbiddenException('No tienes permisos para acceder al usuario con ID ${id}');
         }
         return user;
@@ -50,13 +50,17 @@ export class UsersController {
         const data = this.users.find((user) => user.name === name);
         return data?.correo;
     }
-    
+
     @Post()
     createUser(@Body() user: User) {
-        console.log('.:: user', user)
+        console.log('.:: user', user);
+
+        if (user.correo === undefined) {
+            throw new BadRequestException('El correo es obligatorio');
+        }
         this.users.push(user);
         return {
-            msg: "Usuario creado correctamente",    "Usuario": Unknown word.
+            msg: "Usuario creado correctamente",
             data: user
         }
     }
@@ -65,8 +69,8 @@ export class UsersController {
     deleteUser(@Param('id') id: string) {
         const position = this.users.findIndex((user) => user.id === id);
         this.users.splice(position, 1);
-        return{
-            msg: "Usuario eliminado correctamente", "Usuario": Unknown word.
+        return {
+            msg: "Usuario eliminado correctamente"
         }
     }
 
@@ -77,7 +81,7 @@ export class UsersController {
 
         const position = this.users.findIndex((user) => user.id === id);
 
-        if(position === -1){
+        if (position === -1) {
             return {
                 msg: 'Usuario no encontrado'
             }
@@ -91,10 +95,10 @@ export class UsersController {
 
         this.users[position] = updateUser;
 
-        return{
+        return {
             msg: 'Usuario actualizado correctamente',
             data: updateUser
         };
     }
-    
+
 }
