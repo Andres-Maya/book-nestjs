@@ -1,4 +1,17 @@
-import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Put, UnprocessableEntityException } from '@nestjs/common';
+import { 
+    BadRequestException, 
+    Body, 
+    Controller, 
+    Delete, 
+    ForbiddenException, 
+    Get, 
+    NotFoundException, 
+    Param, 
+    Post, 
+    Put, 
+    UnprocessableEntityException 
+} from '@nestjs/common';
+import { CreateUserDto } from './user.dto';
 
 interface User {
     id: string;
@@ -52,20 +65,26 @@ export class UsersController {
     }
 
     @Post()
-    createUser(@Body() user: User) {
-        console.log('.:: user', user);
+    createUser(@Body() userPayLoad: CreateUserDto) {
+        console.log('.:: user', userPayLoad);
 
-        if(user.correo.includes("@") === false) {
-            throw new UnprocessableEntityException('El correo ${user.correo} no es válido');
+        const newUser ={
+            ...userPayLoad,
+            id: `${new Date().getTime()}`
         }
+        this.users.push(newUser);
 
-        if (user.correo.trim() === "") {
-            throw new BadRequestException('El correo es obligatorio');
-        }
-        this.users.push(user);
+        //if (userPayLoad.correo.trim() === "") {
+        //    throw new BadRequestException(`El correo es obligatorio`);
+        //}
+
+        //if(userPayLoad.correo.includes("@") === false) {
+        //    throw new UnprocessableEntityException(`El correo ${userPayLoad.correo} no es válido`);
+        //}
+        
         return {
-            msg: "Usuario creado correctamente",
-            data: user
+            message: "Usuario creado correctamente",
+            data: userPayLoad
         }
     }
 
