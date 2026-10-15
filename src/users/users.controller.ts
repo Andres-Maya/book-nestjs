@@ -1,127 +1,50 @@
-import { 
-    BadRequestException, 
-    Body, 
-    Controller, 
-    Delete, 
-    ForbiddenException, 
-    Get, 
-    NotFoundException, 
-    Param, 
-    Post, 
-    Put, 
-    UnprocessableEntityException 
+import {
+  Body,
+  Controller,
+  Delete,
+  BadRequestException,
+  ForbiddenException,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  UnprocessableEntityException,
 } from '@nestjs/common';
-import { CreateUserDto } from './user.dto';
-
-interface User {
-    id: string;
-    name: string;
-    correo: string;
-}
+import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-    private users: User[] = [
-        {
-            id: '1',
-            name: 'Mario',
-            correo: 'mario@gmail.com'
-        },
-        {
-            id: '2',
-            name: 'Rosa',
-            correo: 'rosa@gmail.com'
-        },
-        {
-            id: '3',
-            name: 'Juan',
-            correo: 'juan@gmail.com'
-        }
-    ]
+  constructor(private usersService: UsersService) {}
 
-    @Get()
-    getUsers() {
-        return this.users;
-    }
+  @Get('')
+  getAllUsers() {
+    return this.usersService.findAll();
+  }
 
-    @Get(':id')
-    getUserById(@Param('id') id: string) {
-        console.log('.:: UserID', id);
-        const user = this.users.find((user) => user.id === id);
-        console.log(".:: usuario buscado: ", user);
-        if (user === undefined) {
-            throw new NotFoundException('Usuario con ID ${id} no existe');
-        }
-        if (user.id === "1") {
-            throw new ForbiddenException('No tienes permisos para acceder al usuario con ID ${id}');
-        }
-        return user;
-    }
+  @Get(':id')
+  getUserById(@Param('id') id: string) {
+    return this.usersService.findById(id);
+  }
 
-    @Get('search/:name')
-    getUserByName(@Param('name') name: string) {
-        const data = this.users.find((user) => user.name === name);
-        return data?.correo;
-    }
+  @Get('search/:name')
+  getUserUserByName(@Param('name') name: string) {
+    return this.usersService.search(name);
+  }
 
-    @Post()
-    createUser(@Body() userPayLoad: CreateUserDto) {
-        console.log('.:: user', userPayLoad);
+  @Post()
+  createUser(@Body() userPayload: CreateUserDto) {
+    return this.usersService.create(userPayload);
+  }
 
-        const newUser ={
-            ...userPayLoad,
-            id: `${new Date().getTime()}`
-        }
-        this.users.push(newUser);
+  @Delete(':id')
+  deleteUser(@Param('id') id: string) {
+    return this.usersService.delete(id);
+  }
 
-        //if (userPayLoad.correo.trim() === "") {
-        //    throw new BadRequestException(`El correo es obligatorio`);
-        //}
-
-        //if(userPayLoad.correo.includes("@") === false) {
-        //    throw new UnprocessableEntityException(`El correo ${userPayLoad.correo} no es válido`);
-        //}
-        
-        return {
-            message: "Usuario creado correctamente",
-            data: userPayLoad
-        }
-    }
-
-    @Delete(':id')
-    deleteUser(@Param('id') id: string) {
-        const position = this.users.findIndex((user) => user.id === id);
-        this.users.splice(position, 1);
-        return {
-            msg: "Usuario eliminado correctamente"
-        }
-    }
-
-    @Put(':id')
-    updateUser(@Param('id') id: string, @Body() changes: User) {
-        console.log('.:: ID usuario', id);
-        console.log('.:: Cambios', changes);
-
-        const position = this.users.findIndex((user) => user.id === id);
-
-        if (position === -1) {
-            return {
-                msg: 'Usuario no encontrado'
-            }
-        }
-
-        const currentData = this.users[position];
-        const updateUser = {
-            ...currentData,
-            ...changes
-        };
-
-        this.users[position] = updateUser;
-
-        return {
-            msg: 'Usuario actualizado correctamente',
-            data: updateUser
-        };
-    }
-
+  @Put(':id')
+  updateUser(@Param('id') id: string, @Body() changes: UpdateUserDto) {
+    return this.usersService.update(id, changes);
+  }
 }

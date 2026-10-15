@@ -8,7 +8,7 @@ export class CreateUserDto {
 
     @IsEmail()
     @IsNotEmpty()
-    correo: string;
+    email: string;
 }
 
 export class UpdateUserDto {
@@ -19,7 +19,7 @@ export class UpdateUserDto {
 
     @IsEmail()
     @IsNotEmpty()
-    correo: string;
+    email: string;
 
     @IsString()
     @IsNotEmpty()
