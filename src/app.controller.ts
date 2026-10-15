@@ -8,7 +8,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly userService: UsersService,
-    private readonly configService: ConfigService<Env>
+    private readonly configService: ConfigService,
   ) {}
 
   @Get()
