@@ -8,7 +8,7 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor() {}
+  constructor(private userRepository: Repository<User>) {}
 
   private users: User[] = [
     {
@@ -73,12 +73,13 @@ export class UsersService {
     },
   ];
 
-  findAll(): User[] {
+  findAll() {
     // logica de negocio
-    return this.users.filter((user) => user.isActive);
+    const users = await this.userRepository.find();
+    return users;
   }
 
-  findById(id: string): User | undefined {
+  findById(id: number): {
     console.log('.:: User ID: ', id);
     const user = this.users.find((user) => user.id === id);
     console.log('.:: usuario buscado: ', user);
