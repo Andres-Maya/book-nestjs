@@ -31,7 +31,8 @@ export class UsersController {
 
   @Get('search/:name')
   getUserUserByName(@Param('name') name: string) {
-    return this.usersService.search(name);
+    //return this.usersService.search(name);
+    return;
   }
 
   @Post()

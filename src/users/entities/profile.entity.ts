@@ -1,36 +1,38 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({
-    name: 'profiles',
-})
+@Entity(
+    {name: "profiles"}
+)
 export class Profile {
 
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 255, name: 'first_name' })
+    @Column({ type: "varchar", length: 255, name: "first_name" })
     firstName: string;
 
-    @Column({ type: 'varchar', length: 255, name: 'last_name' })
+    @Column({ type: "varchar", length: 255, name: "last_name" })
     lastName: string;
 
-    @Column({ type: 'varchar', length: 255, unique: true, nullable: true })
+    @Column({ type: "varchar", length: 255, nullable: true})
     nickname: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
+    @Column({ type: "varchar", length: 255, nullable: true})
     avatar: string;
-
-    @CreateDateColumn({
-        type: 'timestamp',
-        default: () => 'CURRENT_TIMESTAMP',
-        name: 'created_at',
-    })
+    
+    @CreateDateColumn(
+        { 
+            type: "timestamptz",
+            default: () => "CURRENT_TIMESTAMP",
+            name: "created_at" 
+        })
     createdAt: Date;
 
-    @CreateDateColumn({
-        type: 'timestamp',
-        default: () => 'CURRENT_TIMESTAMP',
-        name: 'updated_at',
-    })
+    @CreateDateColumn(
+        { 
+            type: "timestamptz",
+            default: () => "CURRENT_TIMESTAMP",
+            name: "updated_at" 
+        })
     updatedAt: Date;
 }
